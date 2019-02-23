@@ -17,6 +17,7 @@ UNKNOWN = "???"
 CZAR_USERNAME = "sacm.coke.czar"
 CZAR_EMAIL = "{0}@gmail.com".format(CZAR_USERNAME)
 CZAR_NAME = "Akshay Sood"
+CZAR_VENMO = "@AkshaySood"
 CZAR_OFFICE = "MSC 4715"
 CZAR_MAILROOM = "MSC 4730"
 
@@ -25,8 +26,9 @@ SUBJECT = "MSC Coke Balance"
 CLOSE_ACCOUNT = "If you would like to close your account (and stop receiving these emails), reply and let me know."
 PAYMENT_DETAILS = ("Cash payments can be brought to my office ({0}). Please be sure to indicate your name in case "
                    "you're not handing over the payment personally. Alternatively, checks can be left in my mailbox "
-                   "in {1}. Checks should be written to SACM. I cannot provide change for cash payments, "
-                   "but I can carry over any excess payment as a system credit.".format(CZAR_OFFICE, CZAR_MAILROOM))
+                   "in {1}. Checks should be written to SACM. You may also use Venmo to send me the payment at "
+                   "{2}. I cannot provide change for cash payments, "
+                   "but I can carry over any excess payment as a system credit.".format(CZAR_OFFICE, CZAR_MAILROOM, CZAR_VENMO))
 THANKS = "Thank you, and please let me know if you believe I've made any error.\n\n- {0}, MSC Coke Czar".format(CZAR_NAME)
 DEADLINE = "two weeks"
 SUCCESSOR_ADVERTISEMENT = ("P.S.: the time has come for me to pass on the envied title of Coke Head to another. "
