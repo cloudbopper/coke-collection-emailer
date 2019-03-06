@@ -16,8 +16,8 @@ UNKNOWN = "???"
 # czar info
 CZAR_USERNAME = "sacm.coke.czar"
 CZAR_EMAIL = "{0}@gmail.com".format(CZAR_USERNAME)
+# change these to match your details
 CZAR_NAME = "Akshay Sood"
-CZAR_VENMO = "@AkshaySood"
 CZAR_OFFICE = "MSC 4715"
 CZAR_MAILROOM = "MSC 4730"
 
@@ -26,9 +26,10 @@ SUBJECT = "MSC Coke Balance"
 CLOSE_ACCOUNT = "If you would like to close your account (and stop receiving these emails), reply and let me know."
 PAYMENT_DETAILS = ("Cash payments can be brought to my office ({0}). Please be sure to indicate your name in case "
                    "you're not handing over the payment personally. Alternatively, checks can be left in my mailbox "
-                   "in {1}. Checks should be written to SACM. You may also use Venmo to send me the payment at "
-                   "{2}. I cannot provide change for cash payments, "
-                   "but I can carry over any excess payment as a system credit.".format(CZAR_OFFICE, CZAR_MAILROOM, CZAR_VENMO))
+                   "in {1}. Checks should be written to SACM. I cannot provide change for cash payments, "
+                   "but I can carry over any excess payment as a system credit.".format(CZAR_OFFICE, CZAR_MAILROOM))
+ONLINE_PAYMENT = ("\n\nIf you prefer, you may also pay online via:\nPaypal: {0}\nVenmo: {1}"
+                  "\nGoogle Pay: {2}\nUWCU Moneylink: Upon request")
 THANKS = "Thank you, and please let me know if you believe I've made any error.\n\n- {0}, MSC Coke Czar".format(CZAR_NAME)
 DEADLINE = "two weeks"
 SUCCESSOR_ADVERTISEMENT = ("P.S.: the time has come for me to pass on the envied title of Coke Head to another. "
@@ -55,10 +56,16 @@ def main():
     """Main"""
     parser = argparse.ArgumentParser()
     parser.add_argument("balance_filename", help="file containing balances")
+    parser.add_argument("-high_balance_only", help="only send emails to folks with high balance (debt)",
+                        action="store_true")
     parser.add_argument("-advertise_successor", action="store_true")
     args = parser.parse_args()
 
     server = setup()
+    paypal_email = input("Enter receiving Paypal email: ")
+    venmo_id = input("Enter receiving Venmo id: ")
+    googlepay_email = input("Enter receiving Google Pay email: ")
+    payment_details = PAYMENT_DETAILS + ONLINE_PAYMENT.format(paypal_email, venmo_id, googlepay_email)
 
     with open(args.balance_filename, "r") as balance_file:
         reader = csv.DictReader(balance_file)
@@ -68,6 +75,8 @@ def main():
                 continue
             amount = float(amount.replace("$", ""))
             body = "Hi {0},\n\n".format(name)
+            if args.high_balance_only and amount < 5.00:
+                continue
             if amount < 0.00:
                 # system credit
                 body += ("You have a credit of ${0:.2f} for MSC Coke (you do not owe anything).\n\n{1}\n\n{2}"
@@ -78,11 +87,11 @@ def main():
             elif amount < 5.00:
                 # low charge, can pay later
                 body += ("You owe ${0:.2f} for your MSC Coke. Because your balance is small, you may wait to pay "
-                         "until the next collection if you prefer.\n\n{1}\n\n{2}".format(amount, PAYMENT_DETAILS, THANKS))
+                         "until the next collection if you prefer.\n\n{1}\n\n{2}".format(amount, payment_details, THANKS))
             else:
                 # please pay soon
                 body += ("You owe ${0:.2f} for your MSC Coke. Please make your payment in {3}.\n\n{1}\n\n{2}"
-                         .format(amount, PAYMENT_DETAILS, THANKS, DEADLINE))
+                         .format(amount, payment_details, THANKS, DEADLINE))
             if args.advertise_successor:
                 body += "\n\n\n\n{0}".format(SUCCESSOR_ADVERTISEMENT)
 
