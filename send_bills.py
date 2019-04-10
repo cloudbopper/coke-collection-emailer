@@ -59,6 +59,8 @@ def main():
     parser.add_argument("-high_balance_only", help="only send emails to folks with high balance (debt)",
                         action="store_true")
     parser.add_argument("-advertise_successor", action="store_true")
+    parser.add_argument("-print_only", help="print emailing summary but don't actually send emails",
+                        action="store_true")
     args = parser.parse_args()
 
     server = setup()
@@ -96,7 +98,8 @@ def main():
                 body += "\n\n\n\n{0}".format(SUCCESSOR_ADVERTISEMENT)
 
             print("Mailing {0} at {1}...".format(name, destination_email))
-            send_email(server, destination_email, SUBJECT, body)
+            if not args.print_only:
+                send_email(server, destination_email, SUBJECT, body)
 
 
 def setup():
